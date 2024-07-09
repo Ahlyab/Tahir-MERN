@@ -1,19 +1,41 @@
-// instal express
-// 1. npm init
-// 2. npm install express
-
 const express = require("express");
+
+const bodyParser = require("body-parser");
 const PORT = 5555;
 const app = express();
+app.use(express.static("public"));
 
-app.get("/", (req, res) => {
-  res.send("<h1>hello, World!</h1>");
+const users = [];
+
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+  console.log(email);
+  console.log(password);
+  let login = false;
+  users.forEach((user) => {
+    if (user.email === email && user.password === password) {
+      login = true;
+    }
+  });
+  if (login === true) {
+    res.send("Login Successful");
+  } else {
+    res.send("Login Failed");
+  }
 });
 
-app.get("/maths", (req, res) => {
-  res.send(
-    "<h1>do you know square root -1 equal iota that's an imaginary number</h1>"
-  );
+app.post("/signup", (req, res) => {
+  const { email, password } = req.body;
+  users.push({ email: email, password: password });
+
+  console.log(users);
+  res.redirect("/index.html");
 });
 
 app.listen(PORT, () => {
